@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=La+Belle+Aurore&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #FAF8F7;
+    --bg-warm: #F4ECE9;
+    --blush-soft: #F3E5E7;
+    --rose-muted: #E8CDD2;
+    --gray-soft: #D9D9D6;
+    --gray-medium: #BFC1C2;
+    --text-primary: #302B2D;
+    --text-secondary: #493D40;
+    --text-muted: #6A565B;
+    --accent: #A46F78;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+  }
+
+  /* Custom typography classes */
+  .font-serif {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .font-sans {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  .font-handwriting {
+    font-family: 'La Belle Aurore', cursive;
+  }
+
+  .font-script {
+    font-family: 'Alex Brush', cursive;
+  }
+}
+
+/* Paper and vintage textures */
+.paper-texture {
+  background-color: #FAF8F7;
+  background-image: radial-gradient(#302B2D 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  background-color: #FAF8F7;
+}
+
+.paper-card {
+  background-color: #FAF6F4;
+  box-shadow: 0 4px 20px -2px rgba(48, 43, 45, 0.05), 0 2px 6px -1px rgba(48, 43, 45, 0.03);
+}
+
+.tape-strip {
+  background: rgba(232, 205, 210, 0.45);
+  backdrop-filter: blur(1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Mirror reflection effect */
+.mirror-reflection {
+  background: radial-gradient(circle at 45% 35%, rgba(255, 255, 255, 0.75) 0%, rgba(243, 229, 231, 0.35) 45%, rgba(164, 111, 120, 0.15) 85%, rgba(48, 43, 45, 0.25) 100%);
+}
+
+/* Accessibility: Accessible focus rings */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Accessibility: Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -31,9 +31,10 @@ export default function Tape({
     >
       {/* Main Photographic Tape Image */}
       <img
-        src={assetPath}
+        src={`${assetPath}?v=6`}
         alt=""
-        className="w-[120%] h-[150%] object-contain drop-shadow-sm"
+        className="w-[120%] h-[150%] object-contain drop-shadow-[0_1px_2px_rgba(40,30,20,0.08)]"
+        style={{ mixBlendMode: 'multiply' }}
       />
     </div>
   );

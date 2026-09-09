@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
+import { motion, useAnimation } from 'motion/react';
 
 export interface BotanicalProps {
   className?: string;
@@ -15,6 +15,7 @@ export interface BotanicalProps {
   size?: number;
   interactive?: boolean;
   angle?: number;
+  origin?: string;
 }
 
 /**
@@ -28,8 +29,49 @@ export default function BotanicalElement({
   size = 64,
   interactive = true,
   angle = 0,
+  origin = 'bottom center',
 }: BotanicalProps) {
-  const [isBreeze, setIsBreeze] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const controls = useAnimation();
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
+    const handleChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion || !interactive) return;
+
+    // Subtle random idle breeze trigger
+    const breezeInterval = setInterval(() => {
+      if (!isHovered && Math.random() > 0.6) {
+        controls.start({
+          rotate: [angle, angle + 0.6, angle - 0.3, angle],
+          transition: { duration: 4.5, ease: "easeInOut" }
+        });
+      }
+    }, 8000);
+
+    return () => clearInterval(breezeInterval);
+  }, [angle, controls, isHovered, interactive, reducedMotion]);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (!reducedMotion && interactive) {
+      controls.start({
+        rotate: [angle, angle + 1.2, angle - 0.6, angle],
+        transition: { duration: 3, ease: "easeInOut" }
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
 
   const getAssetPath = () => {
     switch (variant) {
@@ -51,7 +93,7 @@ export default function BotanicalElement({
   const renderGraphic = () => {
     return (
       <img
-        src={`${getAssetPath()}?v=2`}
+        src={`${getAssetPath()}?v=6`}
         alt={`Botanical ${variant}`}
         style={{ width: size, height: 'auto' }}
         className="max-w-none object-contain filter drop-shadow-[1px_2px_2px_rgba(40,30,20,0.2)] pointer-events-none"
@@ -64,7 +106,7 @@ export default function BotanicalElement({
       <div
         aria-hidden="true"
         className={`pointer-events-none select-none flex items-end justify-center ${className}`}
-        style={{ transform: `rotate(${angle}deg)` }}
+        style={{ transform: `rotate(${angle}deg)`, transformOrigin: origin }}
       >
         {renderGraphic()}
       </div>
@@ -73,21 +115,12 @@ export default function BotanicalElement({
 
   return (
     <motion.div
-      onMouseEnter={() => setIsBreeze(true)}
-      onMouseLeave={() => setIsBreeze(false)}
-      animate={{
-        rotate: isBreeze ? angle + 2.5 : angle,
-        y: isBreeze ? -2 : 0,
-        filter: isBreeze
-          ? 'drop-shadow(0 4px 8px rgba(48,43,45,0.12))'
-          : 'drop-shadow(0 2px 4px rgba(48,43,45,0.06))',
-      }}
-      transition={{
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      className={`pointer-events-auto select-none cursor-default flex items-end justify-center ${className}`}
-      style={{ transformOrigin: 'bottom center' }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      initial={{ rotate: angle }}
+      animate={controls}
+      className={`pointer-events-auto select-none flex items-end justify-center ${className}`}
+      style={{ transformOrigin: origin }}
     >
       {renderGraphic()}
     </motion.div>

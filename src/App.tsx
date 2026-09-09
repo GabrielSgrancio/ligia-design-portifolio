@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Navigation from './components/Navigation';
-import HeroMirror from './components/sections/HeroMirror';
+import HeroReplica from './components/hero-v2/HeroReplica';
 import ChildhoodSection from './components/sections/ChildhoodSection';
 import MakeupSection from './components/sections/MakeupSection';
 import NatureSection from './components/sections/NatureSection';
@@ -38,8 +38,8 @@ export default function App() {
 
       {/* Main Narrative Sections in exact chronological and spatial sequence */}
       <main>
-        {/* 01 · Home (O Espelho) */}
-        <HeroMirror />
+        {/* 01 · Home (O Espelho - Hero v2 Replica) */}
+        <HeroReplica />
 
         {/* 02 · Infância e Mirantão */}
         <ChildhoodSection />

@@ -33,34 +33,34 @@ export default function Navigation() {
           : 'bg-transparent py-5 sm:py-7'
       }`}
     >
-      <div className="max-w-6xl mx-auto px-6 sm:px-10 flex items-center justify-between">
+      <div className="max-w-[1440px] mx-auto px-6 sm:px-12 md:px-16 flex items-center justify-between">
         {/* Brand / Name */}
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="text-left group cursor-pointer"
         >
-          <span className="font-serif tracking-[0.28em] text-xs sm:text-sm font-light uppercase text-[#302B2D] group-hover:text-[#A46F78] transition-colors">
+          <span className="font-serif italic tracking-[0.32em] text-sm sm:text-[15px] font-normal text-[#382c23] group-hover:text-[#6e4e3e] transition-colors">
             L Í G I A
           </span>
         </button>
 
         {/* Recruiter Shortcuts (Desktop) */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-10">
           <button
             onClick={() => scrollToSection('sobre')}
-            className="text-xs uppercase tracking-widest text-[#493D40] hover:text-[#A46F78] transition-colors cursor-pointer py-1"
+            className="font-sans text-[10.5px] uppercase tracking-[0.24em] text-[#4a3e35] hover:text-[#281e18] transition-colors cursor-pointer py-1"
           >
             Sobre
           </button>
           <button
             onClick={() => scrollToSection('projetos')}
-            className="text-xs uppercase tracking-widest text-[#493D40] hover:text-[#A46F78] transition-colors cursor-pointer py-1"
+            className="font-sans text-[10.5px] uppercase tracking-[0.24em] text-[#4a3e35] hover:text-[#281e18] transition-colors cursor-pointer py-1"
           >
             Projetos
           </button>
           <button
             onClick={() => scrollToSection('contato')}
-            className="text-xs uppercase tracking-widest text-[#493D40] hover:text-[#A46F78] transition-colors cursor-pointer py-1"
+            className="font-sans text-[10.5px] uppercase tracking-[0.24em] text-[#4a3e35] hover:text-[#281e18] transition-colors cursor-pointer py-1"
           >
             Contato
           </button>

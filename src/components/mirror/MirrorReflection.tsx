@@ -1,80 +1,137 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface MirrorReflectionProps {
   children?: React.ReactNode;
-  interactive?: boolean;
-  filterId?: string;
   isInteracting?: boolean;
   reducedMotion?: boolean;
-  cursorX?: number;
-  cursorY?: number;
-  rippleIntensity?: number;
+  cursorX?: number; // normalized -1..1
+  cursorY?: number; // normalized -1..1
 }
 
-/**
- * MirrorReflection
- * Art-directed photographic reflection of Lígia in an antique silver-mercury mirror.
- */
 export default function MirrorReflection({
   children,
-  filterId,
   isInteracting = false,
   reducedMotion = false,
   cursorX = 0,
   cursorY = 0,
 }: MirrorReflectionProps) {
-  // Subtle natural optical parallax shift when moving the cursor
-  const reflectionShiftX = reducedMotion ? 0 : cursorX * 6;
-  const reflectionShiftY = reducedMotion ? 0 : cursorY * 4;
+  const focusX = ((cursorX + 1) / 2) * 100;
+  const focusY = ((cursorY + 1) / 2) * 100;
+
+  // Reflection moves subtly against the viewer movement to simulate optical depth.
+  const reflectionX = reducedMotion ? 0 : cursorX * -8;
+  const reflectionY = reducedMotion ? 0 : cursorY * -5;
+
+  // Glass glare reacts differently to create depth (moves with or against but at different rate).
+  const glareX = reducedMotion ? 0 : cursorX * 12;
+  const glareY = reducedMotion ? 0 : cursorY * 8;
+
+  const focusMask = reducedMotion
+    ? 'none'
+    : `radial-gradient(
+        circle 135px at ${focusX}% ${focusY}%,
+        rgba(0,0,0,0.95) 0%,
+        rgba(0,0,0,0.72) 28%,
+        rgba(0,0,0,0.28) 58%,
+        transparent 82%
+      )`;
+
+  const reflectionTransform = `translate3d(${reflectionX}px, ${reflectionY}px, 0) scale(1.025)`;
 
   return (
-    <div className="relative w-full h-full overflow-hidden select-none bg-transparent">
+    <div className="relative w-full h-full overflow-hidden select-none bg-[#110f0e]">
 
-      {/* ========================================================================= */}
-      {/* 1. [LÍGIA'S REAL REFLECTION]                                              */}
-      {/* ========================================================================= */}
+      {/* Reflection stack */}
       <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none will-change-transform"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          // Apply SVG displacement filter for calm water undulation
-          filter: filterId && !reducedMotion ? `url(#${filterId})` : undefined,
-          transform: `translate(${reflectionShiftX}px, ${reflectionShiftY}px)`,
+          transform: reflectionTransform,
           transition: isInteracting
-            ? 'transform 0.18s ease-out'
-            : 'transform 1.6s cubic-bezier(0.16, 1, 0.3, 1)',
+            ? 'transform 180ms ease-out'
+            : 'transform 1200ms cubic-bezier(0.16, 1, 0.3, 1)',
+          willChange: 'transform',
         }}
       >
+        {/* BASE REFLECTION - heavily blurred, dark, warm */}
         <img
           src="/assets/ligia-reflection.jpg"
           alt=""
-          className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-[1200ms] ${isInteracting ? 'scale-[1.03]' : 'scale-100'}`}
+          className="absolute inset-0 w-full h-full object-cover object-center"
           style={{
-            // Photographic treatment: Deep antique glass feel, murky and warm, less digital contrast
-            filter: `blur(${isInteracting ? '4px' : '2px'}) brightness(0.85) contrast(0.85) sepia(0.2) saturate(0.8)`,
-          }}
-        />
-        
-        {/* Subtle glass reflection overlay to tie it to the environment (light from window) */}
-        <div 
-          className="absolute inset-0 opacity-25 pointer-events-none mix-blend-screen"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255,250,240,0.8) 0%, transparent 45%, rgba(255,250,240,0.05) 100%)'
+            transform: 'scale(1.035)',
+            filter: 'blur(6px) brightness(0.80) contrast(0.82) saturate(0.65) sepia(0.22)',
           }}
         />
 
-        {/* Antique Mirror Foxing/Oxidation (Darkened edges typical of old mercury mirrors) */}
-        <div 
-          className="absolute inset-0 opacity-30 pointer-events-none mix-blend-multiply"
-          style={{
-            background: 'radial-gradient(circle at center, transparent 40%, rgba(30,24,20,0.4) 80%, rgba(20,15,10,0.8) 100%)'
-          }}
-        />
+        {/* LOCAL "LOOKING CLOSER" REFLECTION - sharper, revealed by hover mask */}
+        {!reducedMotion && (
+          <img
+            src="/assets/ligia-reflection.jpg"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            style={{
+              transform: 'scale(1.035)',
+              filter: 'blur(2.8px) brightness(0.84) contrast(0.88) saturate(0.72) sepia(0.18)',
+              opacity: isInteracting ? 0.38 : 0,
+              maskImage: focusMask,
+              WebkitMaskImage: focusMask,
+              maskRepeat: 'no-repeat',
+              WebkitMaskRepeat: 'no-repeat',
+              transition: 'opacity 500ms ease',
+              willChange: 'mask-image, opacity',
+            }}
+          />
+        )}
       </div>
 
-      {/* ========================================================================= */}
-      {/* 2. TYPOGRAPHIC & EDITORIAL OVERLAY                                        */}
-      {/* ========================================================================= */}
-      <div className="absolute inset-0 flex flex-col justify-between z-20 pointer-events-none select-none py-10">
+      {/* warm antique mercury wash */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none mix-blend-multiply"
+        style={{
+          background: `
+            radial-gradient(
+              ellipse at center,
+              rgba(88, 72, 60, 0.06) 20%,
+              rgba(56, 44, 38, 0.18) 60%,
+              rgba(26, 20, 17, 0.55) 100%
+            )
+          `,
+        }}
+      />
+
+      {/* subtle atmospheric glass veil */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none mix-blend-screen"
+        style={{
+          background: 'linear-gradient(120deg, rgba(255,240,218,0.22), rgba(240,220,190,0.08) 38%, transparent 52%, rgba(255,248,236,0.06) 72%)',
+        }}
+      />
+
+      {/* independent glare */}
+      <div
+        aria-hidden="true"
+        className="absolute -inset-[12%] pointer-events-none mix-blend-screen"
+        style={{
+          transform: `translate3d(${glareX}px, ${glareY}px, 0)`,
+          transition: isInteracting
+            ? 'transform 220ms ease-out'
+            : 'transform 1400ms cubic-bezier(0.16, 1, 0.3, 1)',
+          background: `
+            linear-gradient(
+              125deg,
+              transparent 18%,
+              rgba(255,250,242,0.13) 38%,
+              rgba(255,255,255,0.04) 48%,
+              transparent 62%
+            )
+          `,
+        }}
+      />
+
+      {/* editorial content overlay */}
+      <div className="absolute inset-0 z-20 flex flex-col justify-between py-10 pointer-events-none">
         {children}
       </div>
     </div>

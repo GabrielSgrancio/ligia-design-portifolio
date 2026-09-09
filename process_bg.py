@@ -12,20 +12,46 @@ items = [
     "tape-02.jpg"
 ]
 
-print("Downloading transparent mirror frame from Wikimedia...")
-mirror_url = "https://upload.wikimedia.org/wikipedia/commons/4/4b/Oval_Photo-Mirror_Frame_with_Transparent_Background_780%C3%971040.png"
-r = requests.get(mirror_url)
-if r.status_code == 200:
-    with open(f"{assets_dir}/antique-mirror-frame.png", "wb") as f:
-        f.write(r.content)
-    print("Mirror downloaded successfully!")
-else:
-    print("Failed to download mirror:", r.status_code)
+
+def trim_transparent_canvas(path, padding_ratio=0.05):
+    image = Image.open(path).convert("RGBA")
+
+    alpha = image.getchannel("A")
+    bbox = alpha.getbbox()
+
+    if bbox is None:
+        return
+
+    cropped = image.crop(bbox)
+
+    padding = max(
+        4,
+        int(max(cropped.width, cropped.height) * padding_ratio)
+    )
+
+    output = Image.new(
+        "RGBA",
+        (
+            cropped.width + padding * 2,
+            cropped.height + padding * 2,
+        ),
+        (0, 0, 0, 0),
+    )
+
+    output.paste(
+        cropped,
+        (padding, padding),
+        cropped,
+    )
+
+    output.save(path)
 
 print("Removing backgrounds from generated assets using rembg...")
 for item in items:
-    input_path = os.path.join(assets_dir, item)
-    output_path = os.path.join(assets_dir, item.replace(".jpg", ".png"))
+    input_path = f"{assets_dir}/{item}"
+    # Change extension to .png
+    output_filename = item.rsplit('.', 1)[0] + ".png"
+    output_path = f"{assets_dir}/{output_filename}"
     
     if os.path.exists(input_path):
         print(f"Processing {item}...")
@@ -37,7 +63,10 @@ for item in items:
             
             with open(output_path, 'wb') as o:
                 o.write(output_data)
-            print(f"Saved {output_path}")
+                
+            trim_transparent_canvas(output_path)
+            print(f"Saved cropped {output_path}")
+            
         except Exception as e:
             print(f"Error processing {item}: {e}")
     else:

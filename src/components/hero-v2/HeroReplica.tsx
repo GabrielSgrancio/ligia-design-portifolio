@@ -17,27 +17,7 @@ export default function HeroReplica() {
       id="hero"
       aria-label="Introdução e Espelho"
       className="relative w-full h-screen min-h-[720px] max-h-[1050px] overflow-hidden flex items-center justify-center"
-      style={{
-        backgroundColor: '#f5eee6',
-      }}
     >
-      {/* 01 · Sunlit Plaster Wall Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none select-none">
-        <img
-          src="/assets/hero-v2/01_wall_texture_sunlit.png"
-          alt=""
-          className="w-full h-full object-cover object-center"
-          draggable={false}
-        />
-        {/* Subtle ambient warm vignette for visual depth */}
-        <div
-          className="absolute inset-0 opacity-20 pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse 90% 85% at 50% 45%, transparent 60%, rgba(60,40,30,0.15) 100%)',
-          }}
-        />
-      </div>
-
       {/* Main Art-Directed Wall Stage */}
       <div className="relative z-10 w-full max-w-[1440px] h-full mx-auto flex flex-col justify-between items-center px-4 sm:px-8 pt-4 pb-2">
         {/* Upper space for fixed Header */}

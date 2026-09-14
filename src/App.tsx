@@ -1,6 +1,5 @@
 import Navigation from './components/Navigation';
-import HeroReplica from './components/hero-v2/HeroReplica';
-import OriginSection from './components/origin/OriginSection';
+import HeroOriginStage from './components/HeroOriginStage';
 
 export default function App() {
   return (
@@ -23,8 +22,7 @@ export default function App() {
       </div>
       <Navigation />
       <main className="relative z-10">
-        <HeroReplica />
-        <OriginSection />
+        <HeroOriginStage />
       </main>
     </div>
   );

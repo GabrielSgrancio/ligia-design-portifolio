@@ -8,7 +8,10 @@ export default function HeroReplica() {
   const handleScrollToNext = () => {
     const nextSection = document.getElementById('sobre') || document.querySelector('main > section:nth-child(2)');
     if (nextSection) {
-      nextSection.scrollIntoView({ behavior: 'smooth' });
+      nextSection.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'start',
+      });
     }
   };
 

@@ -58,50 +58,13 @@ const memories: Memory[] = [
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function OriginSection() {
-  const sectionRef = useRef<HTMLElement>(null);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [openMemory, setOpenMemory] = useState<Memory | null>(null);
-  const [sceneProgress, setSceneProgress] = useState(0);
   const touchStart = useRef<number | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const memoryTriggerRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion() === true;
   const currentPhoto = originPhotos[photoIndex];
-
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      setSceneProgress(0);
-      return;
-    }
-
-    let frame = 0;
-    const updateSceneProgress = () => {
-      frame = 0;
-      const section = sectionRef.current;
-      if (!section || !window.matchMedia('(min-width: 1024px)').matches) {
-        setSceneProgress(0);
-        return;
-      }
-
-      const bounds = section.getBoundingClientRect();
-      const travel = Math.max(1, section.offsetHeight);
-      const sectionProgress = Math.min(1, Math.max(0, (window.innerHeight - bounds.top) / travel));
-      setSceneProgress(Math.min(1, Math.max(0, (sectionProgress - 0.7) / 0.3)));
-    };
-
-    const requestUpdate = () => {
-      if (frame === 0) frame = window.requestAnimationFrame(updateSceneProgress);
-    };
-
-    requestUpdate();
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
-    return () => {
-      window.removeEventListener('scroll', requestUpdate);
-      window.removeEventListener('resize', requestUpdate);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, [prefersReducedMotion]);
 
   const selectPhoto = (step: number) => {
     setPhotoIndex((current) => (current + step + originPhotos.length) % originPhotos.length);
@@ -155,20 +118,11 @@ export default function OriginSection() {
 
   return (
     <section
-      ref={sectionRef}
-      id="sobre"
       aria-labelledby="origin-title"
-      data-transition-progress={sceneProgress.toFixed(3)}
-      className="relative min-h-[180svh] overflow-x-clip bg-transparent text-[#3e2b20]"
+      className="relative min-h-[180svh] overflow-x-clip bg-transparent text-[#3e2b20] lg:h-full lg:min-h-0 lg:overflow-hidden"
     >
-
-      <div className={prefersReducedMotion ? 'relative' : 'relative lg:sticky lg:top-0 lg:h-[100svh] lg:overflow-x-clip'}>
-        <div className={prefersReducedMotion ? 'relative w-full' : 'relative h-full w-full overflow-x-clip'}>
-          <div
-            className="relative flex h-full w-full will-change-transform lg:w-[200%]"
-            style={{ transform: 'translate3d(-' + sceneProgress * 22 + 'vw, 0, 0)' }}
-          >
-            <div className="relative w-full shrink-0 lg:w-1/2">
+      <div className="relative h-full w-full overflow-x-clip">
+        <div className="relative h-full w-full">
               <div className="pointer-events-none absolute inset-0 z-0 lg:hidden bg-[radial-gradient(ellipse_70%_55%_at_78%_45%,rgba(255,245,219,.14),transparent_72%)]" />
 
               <div className="pointer-events-none absolute inset-0 z-[1] hidden lg:block">
@@ -422,13 +376,6 @@ export default function OriginSection() {
               </div>
             </div>
 
-            <div
-              data-transition-slot="creative-archive"
-              aria-hidden="true"
-              className="relative hidden h-full w-1/2 shrink-0 lg:block"
-            />
-          </div>
-        </div>
       </div>
 
       {openMemory && (
